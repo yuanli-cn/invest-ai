@@ -1,0 +1,15 @@
+transactions:
+  # Single stock test case
+  - code: "600519"
+    date: "2023-01-10"
+    type: "buy"
+    quantity: 100.0
+    unit_price: 1850.00
+    total_amount: 185000.00
+
+  - code: "600519"
+    date: "2023-06-15"
+    type: "dividend"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 2175.00

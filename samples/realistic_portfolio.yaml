@@ -1,0 +1,245 @@
+transactions:
+  # BLUE CHIP STOCKS
+  # Tencent Holdings (00700)
+  - code: "00700"
+    date: "2022-03-15"
+    type: "buy"
+    quantity: 500.0
+    unit_price: 350.00
+    total_amount: 175000.00
+
+  - code: "00700"
+    date: "2022-06-20"
+    type: "buy"
+    quantity: 200.0
+    unit_price: 380.00
+    total_amount: 76000.00
+
+  - code: "00700"
+    date: "2023-03-10"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 2000.00
+
+  - code: "00700"
+    date: "2023-09-15"
+    type: "sell"
+    quantity: 300.0
+    unit_price: 420.00
+    total_amount: 126000.00
+
+  # Alibaba (09988)
+  - code: "09988"
+    date: "2022-04-10"
+    type: "buy"
+    quantity: 1000.0
+    unit_price: 85.00
+    total_amount: 85000.00
+
+  - code: "09988"
+    date: "2022-08-15"
+    type: "buy"
+    quantity: 500.0
+    unit_price: 95.00
+    total_amount: 47500.00
+
+  - code: "09988"
+    date: "2023-02-20"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 1500.00
+
+  # CHINESE MAINLAND STOCKS
+  # Kweichow Moutai (600519)
+  - code: "600519"
+    date: "2022-05-20"
+    type: "buy"
+    quantity: 50.0
+    unit_price: 1650.00
+    total_amount: 82500.00
+
+  - code: "600519"
+    date: "2023-06-15"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 2175.00
+
+  # Industrial and Commercial Bank of China (601398)
+  - code: "601398"
+    date: "2022-07-15"
+    type: "buy"
+    quantity: 5000.0
+    unit_price: 4.20
+    total_amount: 21000.00
+
+  - code: "601398"
+    date: "2022-12-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 4.50
+    total_amount: 13500.00
+
+  - code: "601398"
+    date: "2023-06-20"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 1250.00
+
+  - code: "601398"
+    date: "2023-11-10"
+    type: "sell"
+    quantity: 2000.0
+    unit_price: 5.20
+    total_amount: 10400.00
+
+  # BROAD MARKET INDEX FUNDS
+  # E Fund CSI 300 Index (110020)
+  - code: "110020"
+    date: "2022-01-15"
+    type: "buy"
+    quantity: 10000.0
+    unit_price: 4.50
+    total_amount: 45000.00
+
+  - code: "110020"
+    date: "2022-04-15"
+    type: "buy"
+    quantity: 5000.0
+    unit_price: 4.35
+    total_amount: 21750.00
+
+  - code: "110020"
+    date: "2022-07-15"
+    type: "buy"
+    quantity: 5000.0
+    unit_price: 4.62
+    total_amount: 23100.00
+
+  - code: "110020"
+    date: "2022-10-15"
+    type: "buy"
+    quantity: 5000.0
+    unit_price: 4.15
+    total_amount: 20750.00
+
+  - code: "110020"
+    date: "2023-03-20"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 1850.00
+
+  - code: "110020"
+    date: "2023-09-10"
+    type: "sell"
+    quantity: 8000.0
+    unit_price: 4.85
+    total_amount: 38800.00
+
+  # ACTIVE FUNDS WITH REGULAR INVESTMENTS
+  # China Southern Growth Hybrid (160106)
+  - code: "160106"
+    date: "2022-01-10"
+    type: "buy"
+    quantity: 8000.0
+    unit_price: 2.85
+    total_amount: 22800.00
+
+  - code: "160106"
+    date: "2022-02-15"
+    type: "buy"
+    quantity: 4000.0
+    unit_price: 2.78
+    total_amount: 11120.00
+
+  - code: "160106"
+    date: "2022-03-15"
+    type: "buy"
+    quantity: 4000.0
+    unit_price: 2.92
+    total_amount: 11680.00
+
+  - code: "160106"
+    date: "2022-04-15"
+    type: "buy"
+    quantity: 4000.0
+    unit_price: 2.86
+    total_amount: 11440.00
+
+  - code: "160106"
+    date: "2022-05-15"
+    type: "buy"
+    quantity: 4000.0
+    unit_price: 2.95
+    total_amount: 11800.00
+
+  - code: "160106"
+    date: "2022-06-15"
+    type: "buy"
+    quantity: 4000.0
+    unit_price: 3.02
+    total_amount: 12080.00
+
+  - code: "160106"
+    date: "2023-04-20"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 3200.00
+
+  - code: "160106"
+    date: "2023-10-15"
+    type: "sell"
+    quantity: 10000.0
+    unit_price: 3.15
+    total_amount: 31500.00
+
+  # INTERNATIONAL MARKETS
+  # Tesla (TSLA) - For testing international stocks
+  # Commented out due to validation issues with international stock codes
+  # - code: "TSLA"
+  #   date: "2022-06-20"
+  #   type: "buy"
+  #   quantity: 100.0
+  #   unit_price: 650.00
+  #   total_amount: 65000.00
+
+  # - code: "TSLA"
+  #   date: "2023-03-30"
+  #   type: "buy"
+  #   quantity: 50.0
+  #   unit_price: 180.00
+  #   total_amount: 9000.00
+
+  # - code: "TSLA"
+  #   date: "2023-08-10"
+  #   type: "dividend"
+  #   dividend_type: "stock"
+  #   quantity: 3.0
+  #   unit_price: 240.00
+  #   total_amount: 720.00
+
+  # BONDS AND FIXED INCOME
+  - code: "010107"
+    date: "2022-03-20"
+    type: "buy"
+    quantity: 10000.0
+    unit_price: 100.50
+    total_amount: 1005000.00
+
+  - code: "010107"
+    date: "2023-06-20"
+    type: "sell"
+    quantity: 5000.0
+    unit_price: 102.20
+    total_amount: 511000.00

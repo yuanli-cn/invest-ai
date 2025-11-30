@@ -1,0 +1,54 @@
+transactions:
+  # Initial purchase of China Southern Fund (110022)
+  - code: "110022"
+    date: "2022-11-10"
+    type: "buy"
+    quantity: 10000.0
+    unit_price: 2.85
+    total_amount: 28500.00
+
+  # Regular monthly investment
+  - code: "110022"
+    date: "2022-12-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 2.78
+    total_amount: 8340.00
+
+  - code: "110022"
+    date: "2023-01-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 2.92
+    total_amount: 8760.00
+
+  - code: "110022"
+    date: "2023-02-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 2.86
+    total_amount: 8580.00
+
+  - code: "110022"
+    date: "2023-03-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 2.95
+    total_amount: 8850.00
+
+  # Fund dividend distribution
+  - code: "110022"
+    date: "2023-06-20"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 450.00
+
+  # Partial redemption
+  - code: "110022"
+    date: "2023-09-10"
+    type: "sell"
+    quantity: 8000.0
+    unit_price: 3.12
+    total_amount: 24960.00

@@ -1,0 +1,50 @@
+transactions:
+  # Initial purchase of Ping An Bank (000001.SZ)
+  - code: "000001"
+    date: "2023-01-15"
+    type: "buy"
+    quantity: 1000.0
+    unit_price: 12.50
+    total_amount: 12500.00
+
+  # Additional purchase at higher price
+  - code: "000001"
+    date: "2023-03-20"
+    type: "buy"
+    quantity: 500.0
+    unit_price: 14.20
+    total_amount: 7100.00
+
+  # Quarterly dividend received
+  - code: "000001"
+    date: "2023-04-10"
+    type: "dividend"
+    dividend_type: "cash"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 180.00  # Cash dividend received
+
+  # Partial sale
+  - code: "000001"
+    date: "2023-07-15"
+    type: "sell"
+    quantity: 300.0
+    unit_price: 16.80
+    total_amount: 5040.00
+
+  # Stock dividend (bonus shares)
+  - code: "000001"
+    date: "2023-09-15"
+    type: "dividend"
+    dividend_type: "stock"
+    quantity: 70.0  # Bonus shares received
+    unit_price: 0.00
+    total_amount: 0.00
+
+  # Year-end sale
+  - code: "000001"
+    date: "2023-12-20"
+    type: "sell"
+    quantity: 800.0
+    unit_price: 15.60
+    total_amount: 12480.00

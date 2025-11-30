@@ -1,0 +1,45 @@
+transactions:
+  # Simple test data for integration testing
+  # Stock purchases and sales
+  - code: "000001"
+    date: "2023-01-15"
+    type: "buy"
+    quantity: 1000.0
+    unit_price: 12.50
+    total_amount: 12500.00
+
+  - code: "000001"
+    date: "2023-06-15"
+    type: "dividend"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 180.00
+
+  - code: "000001"
+    date: "2023-09-15"
+    type: "sell"
+    quantity: 300.0
+    unit_price: 16.80
+    total_amount: 5040.00
+
+  # Fund investment
+  - code: "110022"
+    date: "2022-11-10"
+    type: "buy"
+    quantity: 10000.0
+    unit_price: 2.85
+    total_amount: 28500.00
+
+  - code: "110022"
+    date: "2023-03-15"
+    type: "buy"
+    quantity: 3000.0
+    unit_price: 2.92
+    total_amount: 8760.00
+
+  - code: "110022"
+    date: "2023-06-20"
+    type: "dividend"
+    quantity: 0.0
+    unit_price: 0.00
+    total_amount: 450.00

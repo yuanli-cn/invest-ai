@@ -1,0 +1,176 @@
+# Daily Investment Report Workflow
+# Runs daily to calculate and send investment reports via Telegram
+
+name: daily-report
+
+on:
+  # Run on push to main branch
+  push:
+    branches: [main]
+  
+  # Schedule: Mon-Fri at 15:00 UTC (23:00 Beijing Time)
+  schedule:
+    - cron: '0 15 * * 1-5'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Generate stock report
+        id: stock_report
+        run: |
+          YEAR=$(date +%Y)
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python -c "
+          import json
+          import subprocess
+          import sys
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'stock', '--year', '$YEAR', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              data = json.loads(result.stdout.strip().split('\n')[-1])
+              print('📈 Stock Portfolio $YEAR')
+              print(f\"Start: ¥{data['start_value']:,.0f}\")
+              print(f\"End: ¥{data['end_value']:,.0f}\")
+              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
+              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
+              print(f\"Return: {data['return_rate']:.1f}%\")
+          except:
+              print('📈 Stock report failed')
+              print(result.stderr[:200] if result.stderr else 'No error')
+          " >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate fund report
+        id: fund_report
+        run: |
+          YEAR=$(date +%Y)
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python -c "
+          import json
+          import subprocess
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              data = json.loads(result.stdout.strip().split('\n')[-1])
+              print('💰 Fund Portfolio $YEAR')
+              print(f\"Start: ¥{data['start_value']:,.0f}\")
+              print(f\"End: ¥{data['end_value']:,.0f}\")
+              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
+              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
+              print(f\"Return: {data['return_rate']:.1f}%\")
+          except:
+              print('💰 Fund report failed')
+          " >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate grace fund report
+        id: grace_fund_report
+        run: |
+          YEAR=$(date +%Y)
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python -c "
+          import json
+          import subprocess
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/grace_fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              data = json.loads(result.stdout.strip().split('\n')[-1])
+              print('🌸 Grace Fund $YEAR')
+              print(f\"Start: ¥{data['start_value']:,.0f}\")
+              print(f\"End: ¥{data['end_value']:,.0f}\")
+              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
+              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
+              print(f\"Return: {data['return_rate']:.1f}%\")
+          except:
+              print('🌸 Grace fund report failed')
+          " >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate personal fund report
+        id: personal_fund_report
+        run: |
+          YEAR=$(date +%Y)
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python -c "
+          import json
+          import subprocess
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/personal_fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              data = json.loads(result.stdout.strip().split('\n')[-1])
+              print('👤 Personal Fund $YEAR')
+              print(f\"Start: ¥{data['start_value']:,.0f}\")
+              print(f\"End: ¥{data['end_value']:,.0f}\")
+              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
+              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
+              print(f\"Return: {data['return_rate']:.1f}%\")
+          except:
+              print('👤 Personal fund report failed')
+          " >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Send stock report to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: -1001396387004
+          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          message: ${{ steps.stock_report.outputs.report }}
+
+      - name: Send fund report to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: -1001396387004
+          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          message: ${{ steps.fund_report.outputs.report }}
+
+      - name: Send grace fund report to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: -1001396387004
+          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          message: ${{ steps.grace_fund_report.outputs.report }}
+
+      - name: Send personal fund report to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: -1001396387004
+          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          message: ${{ steps.personal_fund_report.outputs.report }}
