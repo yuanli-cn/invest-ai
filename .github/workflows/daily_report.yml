@@ -40,111 +40,143 @@ jobs:
       - name: Generate stock report
         id: stock_report
         run: |
-          YEAR=$(date +%Y)
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python -c "
+          uv run python << 'SCRIPT'
           import json
           import subprocess
-          import sys
+          from datetime import datetime
 
+          year = str(datetime.now().year)
           result = subprocess.run(
-              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'stock', '--year', '$YEAR', '--format', 'json'],
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'stock', '--year', year, '--format', 'json'],
               capture_output=True, text=True
           )
           
           try:
-              data = json.loads(result.stdout.strip().split('\n')[-1])
-              print('📈 Stock Portfolio $YEAR')
-              print(f\"Start: ¥{data['start_value']:,.0f}\")
-              print(f\"End: ¥{data['end_value']:,.0f}\")
-              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
-              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
-              print(f\"Return: {data['return_rate']:.1f}%\")
-          except:
+              # Find JSON in output (may have warnings before it)
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              print(f'📈 Stock Portfolio {year}')
+              print(f"Start: ¥{data['start_value']:,.0f}")
+              print(f"End: ¥{data['end_value']:,.0f}")
+              print(f"Dividends: ¥{data['dividends']:,.0f}")
+              print(f"Gain: ¥{data['net_gain']:,.0f}")
+              print(f"Return: {data['return_rate']:.1f}%")
+          except Exception as e:
               print('📈 Stock report failed')
-              print(result.stderr[:200] if result.stderr else 'No error')
-          " >> $GITHUB_OUTPUT
+              print(f'Error: {e}')
+              print(f'Stderr: {result.stderr[:500] if result.stderr else "None"}')
+              print(f'Stdout: {result.stdout[:500] if result.stdout else "None"}')
+          SCRIPT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Generate fund report
         id: fund_report
         run: |
-          YEAR=$(date +%Y)
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python -c "
+          uv run python << 'SCRIPT'
           import json
           import subprocess
+          from datetime import datetime
 
+          year = str(datetime.now().year)
           result = subprocess.run(
-              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/fund.yaml', '--year', year, '--format', 'json'],
               capture_output=True, text=True
           )
           
           try:
-              data = json.loads(result.stdout.strip().split('\n')[-1])
-              print('💰 Fund Portfolio $YEAR')
-              print(f\"Start: ¥{data['start_value']:,.0f}\")
-              print(f\"End: ¥{data['end_value']:,.0f}\")
-              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
-              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
-              print(f\"Return: {data['return_rate']:.1f}%\")
-          except:
+              # Find JSON in output (may have warnings before it)
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              print(f'💰 Fund Portfolio {year}')
+              print(f"Start: ¥{data['start_value']:,.0f}")
+              print(f"End: ¥{data['end_value']:,.0f}")
+              print(f"Dividends: ¥{data['dividends']:,.0f}")
+              print(f"Gain: ¥{data['net_gain']:,.0f}")
+              print(f"Return: {data['return_rate']:.1f}%")
+          except Exception as e:
               print('💰 Fund report failed')
-          " >> $GITHUB_OUTPUT
+              print(f'Error: {e}')
+          SCRIPT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Generate grace fund report
         id: grace_fund_report
         run: |
-          YEAR=$(date +%Y)
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python -c "
+          uv run python << 'SCRIPT'
           import json
           import subprocess
+          from datetime import datetime
 
+          year = str(datetime.now().year)
           result = subprocess.run(
-              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/grace_fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/grace_fund.yaml', '--year', year, '--format', 'json'],
               capture_output=True, text=True
           )
           
           try:
-              data = json.loads(result.stdout.strip().split('\n')[-1])
-              print('🌸 Grace Fund $YEAR')
-              print(f\"Start: ¥{data['start_value']:,.0f}\")
-              print(f\"End: ¥{data['end_value']:,.0f}\")
-              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
-              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
-              print(f\"Return: {data['return_rate']:.1f}%\")
-          except:
+              # Find JSON in output (may have warnings before it)
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              print(f'🌸 Grace Fund {year}')
+              print(f"Start: ¥{data['start_value']:,.0f}")
+              print(f"End: ¥{data['end_value']:,.0f}")
+              print(f"Dividends: ¥{data['dividends']:,.0f}")
+              print(f"Gain: ¥{data['net_gain']:,.0f}")
+              print(f"Return: {data['return_rate']:.1f}%")
+          except Exception as e:
               print('🌸 Grace fund report failed')
-          " >> $GITHUB_OUTPUT
+              print(f'Error: {e}')
+          SCRIPT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Generate personal fund report
         id: personal_fund_report
         run: |
-          YEAR=$(date +%Y)
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python -c "
+          uv run python << 'SCRIPT'
           import json
           import subprocess
+          from datetime import datetime
 
+          year = str(datetime.now().year)
           result = subprocess.run(
-              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/personal_fund.yaml', '--year', '$YEAR', '--format', 'json'],
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/personal_fund.yaml', '--year', year, '--format', 'json'],
               capture_output=True, text=True
           )
           
           try:
-              data = json.loads(result.stdout.strip().split('\n')[-1])
-              print('👤 Personal Fund $YEAR')
-              print(f\"Start: ¥{data['start_value']:,.0f}\")
-              print(f\"End: ¥{data['end_value']:,.0f}\")
-              print(f\"Dividends: ¥{data['dividends']:,.0f}\")
-              print(f\"Gain: ¥{data['net_gain']:,.0f}\")
-              print(f\"Return: {data['return_rate']:.1f}%\")
-          except:
+              # Find JSON in output (may have warnings before it)
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              print(f'👤 Personal Fund {year}')
+              print(f"Start: ¥{data['start_value']:,.0f}")
+              print(f"End: ¥{data['end_value']:,.0f}")
+              print(f"Dividends: ¥{data['dividends']:,.0f}")
+              print(f"Gain: ¥{data['net_gain']:,.0f}")
+              print(f"Return: {data['return_rate']:.1f}%")
+          except Exception as e:
               print('👤 Personal fund report failed')
-          " >> $GITHUB_OUTPUT
+              print(f'Error: {e}')
+          SCRIPT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Send stock report to Telegram
