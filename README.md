@@ -235,12 +235,14 @@ Configure these secrets in your repository settings (Settings → Secrets and va
 ### Telegram Message Format
 
 ```
-📈 Stock Portfolio 2025
-Start: ¥261,173
-End: ¥87,027
-Dividends: ¥8,210
-Gain: ¥14,031
-Return: 5.4%
+━━━━━━━━━━━━━━━━━━
+📈 Stock 2025
+━━━━━━━━━━━━━━━━━━
+💵 Start: ¥     261,173
+💰 End:   ¥      87,027
+🎁 Div:   ¥       8,210
+📈 Gain:  ¥      14,031
+📊 Rate:           5.4%
 ```
 
 ### Trigger Options
