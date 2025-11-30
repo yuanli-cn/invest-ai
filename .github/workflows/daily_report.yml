@@ -41,7 +41,7 @@ jobs:
         id: stock_report
         run: |
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python << 'SCRIPT'
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
           import json
           import subprocess
           from datetime import datetime
@@ -78,7 +78,7 @@ jobs:
         id: fund_report
         run: |
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python << 'SCRIPT'
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
           import json
           import subprocess
           from datetime import datetime
@@ -113,7 +113,7 @@ jobs:
         id: grace_fund_report
         run: |
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python << 'SCRIPT'
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
           import json
           import subprocess
           from datetime import datetime
@@ -148,7 +148,7 @@ jobs:
         id: personal_fund_report
         run: |
           echo 'report<<EOF' >> $GITHUB_OUTPUT
-          uv run python << 'SCRIPT'
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
           import json
           import subprocess
           from datetime import datetime
