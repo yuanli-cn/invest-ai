@@ -37,6 +37,22 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Download data from Gist
+        run: |
+          mkdir -p data
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/stock.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_STOCK }}/raw/stock.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_FUND }}/raw/fund.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/grace_fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_GRACE_FUND }}/raw/grace_fund.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/personal_fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_PERSONAL_FUND }}/raw/personal_fund.yaml"
+
       - name: Generate stock report
         id: stock_report
         run: |

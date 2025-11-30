@@ -208,3 +208,6 @@ __marimo__/
 
 # POC files (legacy)
 poc/
+
+# Private data (loaded from Gist)
+data/
