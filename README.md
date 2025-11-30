@@ -1,32 +1,43 @@
-# Invest AI
+<div align="center">
 
-A CLI tool for calculating investment profit and loss for Chinese stocks and mutual funds.
+# 📈 China Investment Profit Calculator
 
-> 🤖 **This project is 100% AI-generated** using [Windsurf](https://codeium.com/windsurf) with Claude as the AI assistant.
+**Calculate profit & loss for Chinese A-shares and mutual funds**
 
-## Features
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/yuanli-cn/invest-ai/actions/workflows/daily_report.yml/badge.svg)](https://github.com/yuanli-cn/invest-ai/actions)
 
-- **FIFO Cost Basis**: First-In-First-Out cost allocation for accurate gain/loss calculation
-- **Annual Reports**: Year-over-year performance with market prices at year boundaries
-- **History Reports**: Complete investment history from first transaction
-- **Market Data**: Tushare (stocks) and East Money (funds) integration
-- **Automated Reports**: GitHub Actions workflow for daily Telegram notifications
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Documentation](#-documentation)
 
-## Installation
+---
+
+> 🤖 **100% AI-generated** using [Windsurf](https://codeium.com/windsurf) + Claude
+
+</div>
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🧮 **FIFO Cost Basis** | First-In-First-Out cost allocation for accurate gain/loss |
+| 📊 **Annual Reports** | Year-over-year performance with real market prices |
+| 📜 **History Reports** | Complete investment history from first transaction |
+| 🔗 **Market Data** | Tushare (stocks) + East Money (funds) integration |
+| 🤖 **Auto Reports** | Daily Telegram notifications via GitHub Actions |
+
+## 🚀 Installation
 
 ```bash
-# Clone and install
-git clone https://github.com/your-username/invest-ai.git
+git clone https://github.com/yuanli-cn/invest-ai.git
 cd invest-ai
 uv sync
 
-# Set Tushare token
+# Set Tushare token (get from https://tushare.pro)
 export TUSHARE_TOKEN=your_token_here
-# Or create .env file
-echo 'TUSHARE_TOKEN=your_token_here' > .env
 ```
 
-## Usage
+## 📖 Usage
 
 ### Annual Returns
 
@@ -64,7 +75,7 @@ uv run python -m invest_ai.cli.main --type stock --year 2025
 uv run python -m invest_ai.cli.main --type stock --year 2025 --format json
 ```
 
-## Transaction Data Format
+## 📝 Transaction Data Format
 
 Create a YAML file with your investment transactions:
 
@@ -112,7 +123,7 @@ transactions:
 | **Sell** | `code`, `date`, `quantity`, `unit_price`, `total_amount` | Stock/fund sale |
 | **Dividend** | `code`, `date`, `dividend_type`, `amount_per_share`, `total_amount` | Cash or stock dividends |
 
-## Output Examples
+## 🖥️ Output Examples
 
 ### Annual Return Report
 ```
@@ -147,7 +158,7 @@ The annual report shows:
 └─────────────────────────────────────┘
 ```
 
-## Command Reference
+## ⌨️ Command Reference
 
 ```
 usage: invest-ai [-h] --type {stock,fund} [--code CODE] [--year YEAR] [--data DATA] [--format {table,json}]
@@ -165,7 +176,7 @@ options:
   --version             Show version
 ```
 
-## Dependencies
+## 📦 Dependencies
 
 ### Python Packages
 - `pydantic`: Data validation and settings management
@@ -177,7 +188,7 @@ options:
 - **Tushare Pro**: Chinese stock market data (requires API token)
 - **East Money**: Chinese mutual fund NAV data (free)
 
-## Documentation
+## 📚 Documentation
 
 ### Specifications (OpenSpec)
 
@@ -196,7 +207,7 @@ This project uses [OpenSpec](https://github.com/openspec) for spec-driven develo
 - [openspec/project.md](openspec/project.md) - Project conventions and tech stack
 - [tests/TESTING.md](tests/TESTING.md) - Testing strategy and guidelines
 
-## API Configuration
+## 🔑 API Configuration
 
 ### Tushare Pro Setup
 1. Register at [Tushare Pro](https://tushare.pro/)
@@ -207,7 +218,7 @@ This project uses [OpenSpec](https://github.com/openspec) for spec-driven develo
 - **Tushare**: 200 calls/day for free tier
 - **East Money**: No authentication required
 
-## GitHub Actions (Automated Daily Reports)
+## 🤖 GitHub Actions
 
 The project includes a GitHub Actions workflow that runs daily (Mon-Fri at 23:00 Beijing Time) and sends reports to Telegram.
 
@@ -238,7 +249,7 @@ Return: 5.4%
 - **On Push**: Runs when pushing to main branch
 - **Manual**: Actions tab → Run workflow
 
-## Development
+## 🛠️ Development
 
 ```bash
 # Run tests
@@ -251,6 +262,6 @@ uv run ruff check .
 
 See [openspec/project.md](openspec/project.md) for coding conventions.
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
