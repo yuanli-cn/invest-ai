@@ -150,27 +150,27 @@ jobs:
       - name: Send stock report to Telegram
         uses: appleboy/telegram-action@master
         with:
-          to: -1001396387004
-          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: ${{ steps.stock_report.outputs.report }}
 
       - name: Send fund report to Telegram
         uses: appleboy/telegram-action@master
         with:
-          to: -1001396387004
-          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: ${{ steps.fund_report.outputs.report }}
 
       - name: Send grace fund report to Telegram
         uses: appleboy/telegram-action@master
         with:
-          to: -1001396387004
-          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: ${{ steps.grace_fund_report.outputs.report }}
 
       - name: Send personal fund report to Telegram
         uses: appleboy/telegram-action@master
         with:
-          to: -1001396387004
-          token: 1071883525:AAEyFabHgugeFh0VItkHQ3lGOqmSYO9sbr8
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: ${{ steps.personal_fund_report.outputs.report }}

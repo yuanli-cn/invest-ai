@@ -58,13 +58,17 @@ class AnnualCalculator:
         # Calculate withdrawals (sells) during the year
         withdrawals = self.calculate_withdrawals(year_transactions)
 
-        # Calculate annual return rate using Modified Dietz method approximation
-        # Net gain = (End Value + Withdrawals) - (Start Value + New Investments)
+        # Calculate annual return rate
+        # Net gain = (End Value + Withdrawals + Dividends) - (Start Value + New Investments)
+        # This matches the poc/invest calculation: profit_delta = (market_value - net_cost) change
         start_value = float(start_value_result.get("current_value", 0.0))
         end_value = float(end_value_result.get("current_value", 0.0))
         realized_gains = float(end_value_result.get("realized_gains", 0.0))
         
-        net_gain = (end_value + withdrawals + realized_gains) - (start_value + new_investments)
+        # Get dividend income for net_gain calculation
+        dividend_income = self.calculate_dividend_income(year_transactions)
+        
+        net_gain = (end_value + withdrawals + dividend_income) - (start_value + new_investments)
 
         # Calculate return rate
         # Average capital = start value + weighted average of cash flows
@@ -73,9 +77,6 @@ class AnnualCalculator:
         denominator = start_value + new_investments
         if denominator > 0:
             return_rate = (net_gain / denominator) * 100
-
-        # Get dividend income
-        dividend_income = self.calculate_dividend_income(year_transactions)
 
         return AnnualResult(
             code=code,

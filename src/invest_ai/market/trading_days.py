@@ -110,9 +110,14 @@ class TradingDaysChina:
         return len(self.get_trading_dates_between(start_date, end_date))
 
     def get_year_start_trading_day(self, year: int) -> date:
-        """Get the first trading day of a year."""
+        """Get the last trading day before a year starts.
+        
+        This matches poc/invest behavior: when querying Jan 1st price,
+        if no data available, look backward to find the last trading day
+        of the previous year.
+        """
         start_date = date(year, 1, 1)
-        return self.get_next_trading_day(start_date)
+        return self.get_previous_trading_day(start_date)
 
     def get_year_end_trading_day(self, year: int) -> date:
         """Get the last trading day of a year."""

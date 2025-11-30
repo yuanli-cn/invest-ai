@@ -131,9 +131,10 @@ class TestTradingDaysChina:
         """Test get_year_start_trading_day."""
         tdc = TradingDaysChina()
         start_day = tdc.get_year_start_trading_day(2023)
-        # Should be the first trading day of 2023
-        assert start_day.year == 2023
-        assert start_day.month == 1
+        # Should be the last trading day before 2023 (i.e., last trading day of 2022)
+        # This matches poc/invest behavior for year-start price lookup
+        assert start_day.year == 2022
+        assert start_day.month == 12
         assert start_day.weekday() < 5  # Should be a weekday
 
     def test_get_year_end_trading_day(self):
@@ -174,5 +175,6 @@ class TestConvenienceFunctions:
     def test_get_year_start_trading_day_function(self):
         """Test get_year_start_trading_day convenience function."""
         result = get_year_start_trading_day(2023)
-        assert result.year == 2023
-        assert result.month == 1
+        # Should be the last trading day before 2023 (i.e., last trading day of 2022)
+        assert result.year == 2022
+        assert result.month == 12

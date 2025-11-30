@@ -698,7 +698,8 @@ class TestAllUserScenarios:
         # Remaining: 500 shares @ year-end price 25.50 = 12750
         assert result.end_value == 12750.0
         
-        # Annual return calculation:
-        # net_gain = (end_value + withdrawals + realized) - (start_value + new_investments)
-        # = (12750 + 40500 + 8000) - (0 + 45000) = 16250
-        assert result.net_gain == 16250.0
+        # Annual return calculation (matches poc/invest logic):
+        # net_gain = (end_value + withdrawals + dividends) - (start_value + new_investments)
+        # = (12750 + 40500 + 0) - (0 + 45000) = 8250
+        # Note: realized gains are NOT added separately since withdrawals already includes the full sale amount
+        assert result.net_gain == 8250.0
