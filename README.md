@@ -99,6 +99,11 @@ transactions:
 - Stock: `data/stock.yaml`
 - Fund: `data/fund.yaml`
 
+> 💡 **Tip**: Check the `samples/` directory for complete example portfolios:
+> - `samples/stock_portfolio.yaml` - Stock transactions example
+> - `samples/fund_portfolio.yaml` - Fund transactions example
+> - `samples/mixed_portfolio.yaml` - Mixed portfolio example
+
 ### Supported Transaction Types
 
 | Type | Required Fields | Description |
