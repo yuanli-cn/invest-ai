@@ -1,76 +1,67 @@
-# Invest AI - Investment Profit & Loss Calculator
+# Invest AI
 
-A Python CLI tool for calculating investment profit and loss for Chinese stocks and mutual funds with precision cost allocation and comprehensive performance reporting.
+A CLI tool for calculating investment profit and loss for Chinese stocks and mutual funds.
+
+> 🤖 **This project is 100% AI-generated** using [Windsurf](https://codeium.com/windsurf) with Claude as the AI assistant.
 
 ## Features
 
-- **FIFO Cost Allocation**: Accurate cost basis calculation using First-In-First-Out method
-- **Flexible Analysis**: Support for annual returns and full investment history
-- **Market Integration**: Real-time market data from Tushare (stocks) and East Money (funds)
-- **Comprehensive Reports**: Detailed P&L analysis with performance metrics
-- **CLI Interface**: Simple command-line interface for easy automation
+- **FIFO Cost Basis**: First-In-First-Out cost allocation for accurate gain/loss calculation
+- **Annual Reports**: Year-over-year performance with market prices at year boundaries
+- **History Reports**: Complete investment history from first transaction
+- **Market Data**: Tushare (stocks) and East Money (funds) integration
+- **Automated Reports**: GitHub Actions workflow for daily Telegram notifications
 
-## Quick Start
+## Installation
 
-### Prerequisites
-
-- Python 3.12
-- uv package manager
-- Tushare Pro API token for stock data
-- YAML transaction file
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone <repository-url>
+# Clone and install
+git clone https://github.com/your-username/invest-ai.git
 cd invest-ai
-```
-
-2. Install dependencies with uv
-```bash
 uv sync
-```
 
-3. Set up your Tushare token (choose one method)
-
-**Option A: Environment variable**
-```bash
+# Set Tushare token
 export TUSHARE_TOKEN=your_token_here
-```
-
-**Option B: Create `.env` file**
-```bash
+# Or create .env file
 echo 'TUSHARE_TOKEN=your_token_here' > .env
 ```
 
-### Usage
+## Usage
 
-#### Basic usage examples:
+### Annual Returns
 
-**Show help:**
 ```bash
-uv run python -m invest_ai.cli.main
+# Stock portfolio for current year
+uv run python -m invest_ai.cli.main --type stock --year 2025
+
+# Fund portfolio for specific year
+uv run python -m invest_ai.cli.main --type fund --year 2024
+
+# Specific stock
+uv run python -m invest_ai.cli.main --type stock --code 000001 --year 2024
 ```
 
-**Calculate annual returns for all stocks in 2023 (using default data/stock.yaml):**
+### Complete History
+
 ```bash
-uv run python -m invest_ai.cli.main --type stock --year 2023
+# All stocks
+uv run python -m invest_ai.cli.main --type stock
+
+# Specific fund
+uv run python -m invest_ai.cli.main --type fund --code 050027
+
+# Custom data file
+uv run python -m invest_ai.cli.main --type fund --data my_portfolio.yaml
 ```
 
-**Calculate complete history for a specific stock:**
-```bash
-uv run python -m invest_ai.cli.main --type stock --code 000001
-```
+### Output Formats
 
-**Calculate annual returns for all funds:**
 ```bash
-uv run python -m invest_ai.cli.main --type fund --year 2023
-```
+# Table format (default)
+uv run python -m invest_ai.cli.main --type stock --year 2025
 
-**Full history with custom data file:**
-```bash
-uv run python -m invest_ai.cli.main --type stock --data my_transactions.yaml
+# JSON format (for automation)
+uv run python -m invest_ai.cli.main --type stock --year 2025 --format json
 ```
 
 ## Transaction Data Format
@@ -183,18 +174,22 @@ options:
 
 ## Documentation
 
-This project follows a structured documentation approach:
+### Specifications (OpenSpec)
 
-### Design Documents
-- **[Design Specification](docs/design.md)**: User workflows, system architecture, and component interactions
+This project uses [OpenSpec](https://github.com/openspec) for spec-driven development:
 
-### Domain Knowledge
-- **[Stock Price Retrieval](docs/domain-knowledge/stock-price-retrieval.md)**: Tushare API usage and verification
-- **[Fund NAV Retrieval](docs/domain-knowledge/fund-nav-retrieval.md)**: East Money API integration patterns
-- **[Investment Calculation Methods](docs/domain-knowledge/investment-calculation-methods.md)**: FIFO cost allocation and performance metrics
+| Spec | Description |
+|------|-------------|
+| [cli](openspec/specs/cli/spec.md) | Command-line interface requirements |
+| [investment-calculation](openspec/specs/investment-calculation/spec.md) | FIFO, annual, and history calculation logic |
+| [market-data](openspec/specs/market-data/spec.md) | Tushare and East Money API integration |
+| [reporting](openspec/specs/reporting/spec.md) | Output formatting and report generation |
+| [transaction-processing](openspec/specs/transaction-processing/spec.md) | Transaction loading and validation |
 
-### Project Guidelines
-- **[CLAUDE.md](CLAUDE.md)**: Project-specific development guidelines and documentation standards
+### Other Documents
+
+- [openspec/project.md](openspec/project.md) - Project conventions and tech stack
+- [tests/TESTING.md](tests/TESTING.md) - Testing strategy and guidelines
 
 ## API Configuration
 
@@ -207,128 +202,50 @@ This project follows a structured documentation approach:
 - **Tushare**: 200 calls/day for free tier
 - **East Money**: No authentication required
 
-## Development
-
-### Running Tests
-
-**Run all tests:**
-```bash
-uv run pytest
-```
-
-**Run only unit tests:**
-```bash
-uv run pytest tests/unit/
-```
-
-**Run only integration tests:**
-```bash
-uv run pytest tests/integration/
-```
-
-**Run specific test file:**
-```bash
-uv run pytest tests/integration/test_all_user_scenarios.py -v
-```
-
-### Test Coverage
-
-This project maintains **100% test pass rate** with **74% code coverage**:
-
-#### Test Summary: 444 tests passing
-- FIFO cost basis calculations
-- Annual return calculations  
-- Complete history calculations
-- Transaction validation and filtering
-- CLI argument handling
-- API client integration
-- Report generation
-
-#### Integration Tests
-Comprehensive end-to-end tests covering all user scenarios:
-
-- **Stock Annual Returns**: Specific stock and portfolio calculations
-- **Stock Complete History**: Full investment history for specific stocks and portfolios
-- **Fund Annual Returns**: Specific fund and portfolio calculations
-- **Fund Complete History**: Full investment history for specific funds and portfolios
-- **Mixed Portfolio**: Combined stock and fund portfolio calculations
-- **JSON Output Format**: Structured data output verification
-- **Error Handling**: Invalid codes, files, and edge cases
-- **Dividend Tracking**: Separate dividend income tracking
-- **FIFO Accuracy**: Cost basis calculation verification
-
-### Code Formatting
-```bash
-uv run black .
-uv run ruff check .
-```
-
-### Project Structure
-```
-invest-ai/
-├── main.py                 # CLI entry point
-├── src/                    # Source modules
-├── tests/                  # Test suite
-├── docs/                   # Documentation
-├── pyproject.toml          # Project configuration
-├── CLAUDE.md              # Development guidelines
-└── README.md              # This file
-```
-
-## Performance Considerations
-
-- **Memory Efficient**: Processes transactions in chronological order
-- **API Rate Limiting**: Tushare API has 50 requests/minute limit; built-in rate limiter prevents exceeding this
-- **API Optimization**: Fetches only required data points for year-start and year-end prices
-- **Error Handling**: Graceful degradation when external APIs are unavailable
-
 ## GitHub Actions (Automated Daily Reports)
 
 The project includes a GitHub Actions workflow that runs daily (Mon-Fri at 23:00 Beijing Time) and sends reports to Telegram.
 
 ### Required GitHub Secrets
 
-Configure this secret in your repository settings (Settings → Secrets and variables → Actions):
+Configure these secrets in your repository settings (Settings → Secrets and variables → Actions → Repository secrets):
 
 | Secret | Description |
 |--------|-------------|
-| `TUSHARE_TOKEN` | Tushare Pro API token for stock data |
-
-Note: Telegram Bot token and Chat ID are pre-configured in the workflow.
+| `TUSHARE_TOKEN` | Tushare Pro API token |
+| `TELEGRAM_BOT_TOKEN` | Telegram Bot token |
+| `TELEGRAM_CHAT_ID` | Telegram Chat/Group ID |
 
 ### Telegram Message Format
 
-Reports are sent in a clean format:
 ```
-📈 Stock Portfolio 2024
-Start: ¥303,686
-End: ¥262,858
-Dividends: ¥15,127
-Gain: ¥210,697
-Return: 69.4%
+📈 Stock Portfolio 2025
+Start: ¥261,173
+End: ¥87,027
+Dividends: ¥8,210
+Gain: ¥14,031
+Return: 5.4%
 ```
 
-### Manual Trigger
+### Trigger Options
 
-You can manually trigger the workflow from the GitHub Actions tab.
+- **Automatic**: Mon-Fri at 23:00 Beijing Time
+- **On Push**: Runs when pushing to main branch
+- **Manual**: Actions tab → Run workflow
 
-## Contributing
+## Development
 
-Follow the guidelines in [CLAUDE.md](CLAUDE.md) for:
+```bash
+# Run tests
+uv run pytest
 
-1. Code style and formatting standards
-2. Documentation requirements
-3. Testing strategies
-4. Implementation principles
+# Format code
+uv run black .
+uv run ruff check .
+```
+
+See [openspec/project.md](openspec/project.md) for coding conventions.
 
 ## License
 
-[Add your license information here]
-
-## Support
-
-For issues and questions:
-
-1. Check the [documentation](docs/) for detailed information
-2. Review the [development guidelines](CLAUDE.md)
-3. Ensure all external dependencies are properly configured
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
