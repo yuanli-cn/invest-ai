@@ -64,7 +64,7 @@ class AnnualReportTemplate(ReportTemplate):
             f"  Net Gain/Loss:    {self.format_gain_loss(data.get('net_gain', 0))}"
         )
         lines.append(
-            f"  Return Rate:      {self.format_percentage(data.get('return_rate', 0))}"
+            f"  XIRR (Annual):      {self.format_percentage(data.get('return_rate', 0))}"
         )
 
         if data.get("dividends", 0) > 0:
@@ -118,7 +118,7 @@ class HistoryReportTemplate(ReportTemplate):
             f"  Total P&L:        {self.format_gain_loss(data.get('total_gain', 0))}"
         )
         lines.append(
-            f"  Return Rate:      {self.format_percentage(data.get('return_rate', 0))}"
+            f"  XIRR (Annual):      {self.format_percentage(data.get('return_rate', 0))}"
         )
 
         # Gains breakdown
@@ -163,7 +163,7 @@ class DetailedReportTemplate(ReportTemplate):
                 f"  Total P&L:        {self.format_gain_loss(summary.get('total_gain', 0))}"
             )
             lines.append(
-                f"  Return Rate:      {self.format_percentage(summary.get('return_rate', 0))}"
+                f"  XIRR (Annual):      {self.format_percentage(summary.get('return_rate', 0))}"
             )
             lines.append("")
 
@@ -192,7 +192,7 @@ class DetailedReportTemplate(ReportTemplate):
                     f"   P&L:            {self.format_gain_loss(inv.get('total_gain', 0))}"
                 )
                 lines.append(
-                    f"   Return Rate:    {self.format_percentage(inv.get('return_rate', 0))}"
+                    f"   XIRR (Annual):    {self.format_percentage(inv.get('return_rate', 0))}"
                 )
 
                 if i < len(investments):

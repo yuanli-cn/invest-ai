@@ -133,7 +133,7 @@ class ReportGenerator:
         table.add_row("Start Value:", f"¥{result.start_value:,.2f}")
         table.add_row("End Value:", f"¥{result.end_value:,.2f}")
         table.add_row("Net Gain/Loss:", self._format_gain_loss(result.net_gain))
-        table.add_row("Return Rate:", f"{result.return_rate:.2f}%")
+        table.add_row("XIRR (Annual):", f"{result.return_rate:.2f}%")
 
         if result.dividends > 0:
             table.add_row("Dividend Income:", f"¥{result.dividends:,.2f}")
@@ -158,7 +158,7 @@ class ReportGenerator:
         table.add_row("Total Invested:", f"¥{result.total_invested:,.2f}")
         table.add_row("Current Value:", f"¥{result.current_value:,.2f}")
         table.add_row("Total P&L:", self._format_gain_loss(result.total_gain))
-        table.add_row("Return Rate:", f"{result.return_rate:.2f}%")
+        table.add_row("XIRR (Annual):", f"{result.return_rate:.2f}%")
         table.add_row("Realized Gains:", f"¥{result.realized_gains:,.2f}")
         table.add_row("Unrealized Gains:", f"¥{result.unrealized_gains:,.2f}")
 

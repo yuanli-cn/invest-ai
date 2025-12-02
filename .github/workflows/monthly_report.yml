@@ -1,0 +1,266 @@
+# Monthly Investment History Report
+# Runs on last day of each month to send portfolio history via Telegram
+
+name: monthly-report
+
+on:
+  # Schedule: Last days of month at 15:00 UTC (23:00 Beijing Time)
+  schedule:
+    - cron: '0 15 28-31 * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+
+jobs:
+  monthly-history:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check if last day of month
+        id: check_last_day
+        run: |
+          # Get tomorrow's day of month
+          TOMORROW_DAY=$(date -d "tomorrow" +%d)
+          # If tomorrow is day 1, today is the last day of the month
+          if [ "$TOMORROW_DAY" = "01" ]; then
+            echo "is_last_day=true" >> $GITHUB_OUTPUT
+          else
+            # Also allow manual trigger
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "is_last_day=true" >> $GITHUB_OUTPUT
+            else
+              echo "is_last_day=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Checkout repository
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        run: uv sync
+
+      - name: Download data from Gist
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        run: |
+          mkdir -p data
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/stock.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_STOCK }}/raw/stock.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_FUND }}/raw/fund.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/grace_fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_GRACE_FUND }}/raw/grace_fund.yaml"
+          curl -sH "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -o data/personal_fund.yaml \
+            "https://gist.githubusercontent.com/${{ github.repository_owner }}/${{ secrets.GIST_ID_PERSONAL_FUND }}/raw/personal_fund.yaml"
+
+      - name: Generate stock history report
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        id: stock_history
+        run: |
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
+          import json
+          import subprocess
+          from datetime import date
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'stock', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              gain_emoji = '📈' if data['total_gain'] >= 0 else '📉'
+              first_date = data.get('first_investment', 'N/A')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f'📊 Stock History')
+              print(f'📅 {first_date} ~ {date.today()}')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f"💵 Invested: ¥{data['total_invested']:>10,.0f}")
+              print(f"💰 Value:    ¥{data['current_value']:>10,.0f}")
+              print(f"{gain_emoji} P&L:     ¥{data['total_gain']:>10,.0f}")
+              print(f"📊 XIRR:     {data['return_rate']:>10.1f}%")
+          except Exception as e:
+              print('📊 Stock history failed')
+              print(f'Error: {e}')
+          SCRIPT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate fund history report
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        id: fund_history
+        run: |
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
+          import json
+          import subprocess
+          from datetime import date
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/fund.yaml', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              gain_emoji = '📈' if data['total_gain'] >= 0 else '📉'
+              first_date = data.get('first_investment', 'N/A')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f'💰 Fund History')
+              print(f'📅 {first_date} ~ {date.today()}')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f"💵 Invested: ¥{data['total_invested']:>10,.0f}")
+              print(f"💰 Value:    ¥{data['current_value']:>10,.0f}")
+              print(f"{gain_emoji} P&L:     ¥{data['total_gain']:>10,.0f}")
+              print(f"📊 XIRR:     {data['return_rate']:>10.1f}%")
+          except Exception as e:
+              print('💰 Fund history failed')
+              print(f'Error: {e}')
+          SCRIPT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate grace fund history report
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        id: grace_fund_history
+        run: |
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
+          import json
+          import subprocess
+          from datetime import date
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/grace_fund.yaml', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              gain_emoji = '📈' if data['total_gain'] >= 0 else '📉'
+              first_date = data.get('first_investment', 'N/A')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f'🌸 Grace Fund History')
+              print(f'📅 {first_date} ~ {date.today()}')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f"💵 Invested: ¥{data['total_invested']:>10,.0f}")
+              print(f"💰 Value:    ¥{data['current_value']:>10,.0f}")
+              print(f"{gain_emoji} P&L:     ¥{data['total_gain']:>10,.0f}")
+              print(f"📊 XIRR:     {data['return_rate']:>10.1f}%")
+          except Exception as e:
+              print('🌸 Grace fund history failed')
+              print(f'Error: {e}')
+          SCRIPT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Generate personal fund history report
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        id: personal_fund_history
+        run: |
+          echo 'report<<EOF' >> $GITHUB_OUTPUT
+          uv run python << 'SCRIPT' >> $GITHUB_OUTPUT
+          import json
+          import subprocess
+          from datetime import date
+
+          result = subprocess.run(
+              ['uv', 'run', 'python', '-m', 'invest_ai.cli.main', '--type', 'fund', '--data', 'data/personal_fund.yaml', '--format', 'json'],
+              capture_output=True, text=True
+          )
+          
+          try:
+              stdout = result.stdout.strip()
+              json_start = stdout.find('{')
+              if json_start >= 0:
+                  data = json.loads(stdout[json_start:])
+              else:
+                  raise ValueError("No JSON found in output")
+              gain_emoji = '📈' if data['total_gain'] >= 0 else '📉'
+              first_date = data.get('first_investment', 'N/A')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f'👤 Personal Fund History')
+              print(f'📅 {first_date} ~ {date.today()}')
+              print(f'━━━━━━━━━━━━━━━━━━━━━━')
+              print(f"💵 Invested: ¥{data['total_invested']:>10,.0f}")
+              print(f"💰 Value:    ¥{data['current_value']:>10,.0f}")
+              print(f"{gain_emoji} P&L:     ¥{data['total_gain']:>10,.0f}")
+              print(f"📊 XIRR:     {data['return_rate']:>10.1f}%")
+          except Exception as e:
+              print('👤 Personal fund history failed')
+              print(f'Error: {e}')
+          SCRIPT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Send monthly header to Telegram
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            📆 Monthly Investment Summary
+            ━━━━━━━━━━━━━━━━━━━━━━
+
+      - name: Send stock history to Telegram
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: ${{ steps.stock_history.outputs.report }}
+
+      - name: Send fund history to Telegram
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: ${{ steps.fund_history.outputs.report }}
+
+      - name: Send grace fund history to Telegram
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: ${{ steps.grace_fund_history.outputs.report }}
+
+      - name: Send personal fund history to Telegram
+        if: steps.check_last_day.outputs.is_last_day == 'true'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: ${{ steps.personal_fund_history.outputs.report }}

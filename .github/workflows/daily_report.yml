@@ -84,7 +84,7 @@ jobs:
               print(f"💰 End:   ¥{data['end_value']:>12,.0f}")
               print(f"🎁 Div:   ¥{data['dividends']:>12,.0f}")
               print(f"{gain_emoji} Gain:  ¥{data['net_gain']:>12,.0f}")
-              print(f"📊 Rate:  {data['return_rate']:>12.1f}%")
+              print(f"📊 XIRR:  {data['return_rate']:>12.1f}%")
           except Exception as e:
               print('📈 Stock report failed')
               print(f'Error: {e}')
@@ -124,7 +124,7 @@ jobs:
               print(f"💰 End:   ¥{data['end_value']:>12,.0f}")
               print(f"🎁 Div:   ¥{data['dividends']:>12,.0f}")
               print(f"{gain_emoji} Gain:  ¥{data['net_gain']:>12,.0f}")
-              print(f"📊 Rate:  {data['return_rate']:>12.1f}%")
+              print(f"📊 XIRR:  {data['return_rate']:>12.1f}%")
           except Exception as e:
               print('💰 Fund report failed')
               print(f'Error: {e}')
@@ -162,7 +162,7 @@ jobs:
               print(f"💰 End:   ¥{data['end_value']:>12,.0f}")
               print(f"🎁 Div:   ¥{data['dividends']:>12,.0f}")
               print(f"{gain_emoji} Gain:  ¥{data['net_gain']:>12,.0f}")
-              print(f"📊 Rate:  {data['return_rate']:>12.1f}%")
+              print(f"📊 XIRR:  {data['return_rate']:>12.1f}%")
           except Exception as e:
               print('🌸 Grace fund report failed')
               print(f'Error: {e}')
@@ -200,7 +200,7 @@ jobs:
               print(f"💰 End:   ¥{data['end_value']:>12,.0f}")
               print(f"🎁 Div:   ¥{data['dividends']:>12,.0f}")
               print(f"{gain_emoji} Gain:  ¥{data['net_gain']:>12,.0f}")
-              print(f"📊 Rate:  {data['return_rate']:>12.1f}%")
+              print(f"📊 XIRR:  {data['return_rate']:>12.1f}%")
           except Exception as e:
               print('👤 Personal fund report failed')
               print(f'Error: {e}')

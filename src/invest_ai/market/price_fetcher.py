@@ -145,9 +145,9 @@ class PriceFetcher:
                 nav_data = await self.eastmoney_client.fetch_fund_nav(code, target_date)
                 return PriceData(
                     code=nav_data.code,
-                    date=nav_data.date,
-                    price=nav_data.nav,
-                    source=nav_data.source,
+                    price_date=nav_data.nav_date,
+                    price_value=nav_data.nav,
+                    source="eastmoney",
                 )
         except Exception as e:
             print(f"Warning: Failed to fetch price for {code}: {e}")

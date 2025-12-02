@@ -238,7 +238,7 @@ class CLIController:
 │ Initial Investment: ¥{annual_result.start_value:,.2f}
 │ Current Value:     ¥{annual_result.end_value:,.2f}
 │ Net Gain/Loss:     ¥{annual_result.net_gain:,.2f}
-│ Return Rate:       {annual_result.return_rate:.2f}%
+│ XIRR (Annual):       {annual_result.return_rate:.2f}%
 │ Dividends:         ¥{annual_result.dividends:,.2f}
 └─────────────────────────────────────┘"""
                     else:
@@ -251,31 +251,38 @@ class CLIController:
 │ Dividends:         ¥{annual_result.dividends:,.2f}
 │ Capital Gain:      ¥{annual_result.capital_gain:,.2f}
 │ Total Gain/Loss:   ¥{annual_result.net_gain:,.2f}
-│ Return Rate:       {annual_result.return_rate:.2f}%
+│ XIRR (Annual):       {annual_result.return_rate:.2f}%
 └─────────────────────────────────────┘"""
                 else:
                     # This should be a HistoryResult
                     history_result = cast(HistoryResult, result)
                     # Simple clean history output
+                    # Build date range string
+                    start_date = history_result.first_investment.strftime("%Y-%m-%d") if history_result.first_investment else "N/A"
+                    end_date = date.today().strftime("%Y-%m-%d")
+                    date_range = f"{start_date} ~ {end_date}"
+                    
                     if args.code:
                         output = f"""
 ┌─────────────────────────────────────┐
 │ {args.type.upper()} {args.code} - History
+│ {date_range}
 ├─────────────────────────────────────┤
 │ Total Invested:    ¥{history_result.total_invested:,.2f}
 │ Current Value:     ¥{history_result.current_value:,.2f}
 │ Total P&L:         ¥{history_result.total_gain:,.2f}
-│ Return Rate:       {history_result.return_rate:.2f}%
+│ XIRR (Annual):       {history_result.return_rate:.2f}%
 └─────────────────────────────────────┘"""
                     else:
                         output = f"""
 ┌─────────────────────────────────────┐
 │ PORTFOLIO HISTORY
+│ {date_range}
 ├─────────────────────────────────────┤
 │ Total Invested:    ¥{history_result.total_invested:,.2f}
 │ Current Value:     ¥{history_result.current_value:,.2f}
 │ Total P&L:         ¥{history_result.total_gain:,.2f}
-│ Return Rate:       {history_result.return_rate:.2f}%
+│ XIRR (Annual):       {history_result.return_rate:.2f}%
 └─────────────────────────────────────┘"""
 
             print(output)

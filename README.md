@@ -246,7 +246,12 @@ This project uses [OpenSpec](https://github.com/openspec) for spec-driven develo
 
 ## 🤖 GitHub Actions
 
-The project includes a GitHub Actions workflow that runs daily (Mon-Fri at 23:00 Beijing Time) and sends reports to Telegram.
+The project includes two GitHub Actions workflows:
+
+| Workflow | Schedule | Report Type |
+|----------|----------|-------------|
+| `daily-report` | Mon-Fri 23:00 Beijing | Annual performance |
+| `monthly-report` | Last day of month | All-time XIRR history |
 
 ### Required GitHub Secrets
 
@@ -260,6 +265,7 @@ Configure these secrets in your repository settings (Settings → Secrets and va
 
 ### Telegram Message Format
 
+**Daily Report (Annual)**
 ```
 ━━━━━━━━━━━━━━━━━━
 📈 Stock 2025
@@ -268,14 +274,27 @@ Configure these secrets in your repository settings (Settings → Secrets and va
 💰 End:   ¥      87,027
 🎁 Div:   ¥       8,210
 📈 Gain:  ¥      14,031
-📊 Rate:           5.4%
+📊 XIRR:           5.4%
+```
+
+**Monthly Report (History)**
+```
+━━━━━━━━━━━━━━━━━━━━━━
+📊 Stock History
+📅 2018-10-15 ~ 2025-12-02
+━━━━━━━━━━━━━━━━━━━━━━
+💵 Invested: ¥  1,152,334
+💰 Value:    ¥     87,027
+📈 P&L:      ¥    164,109
+📊 XIRR:          14.4%
 ```
 
 ### Trigger Options
 
-- **Automatic**: Mon-Fri at 23:00 Beijing Time
+- **Daily**: Mon-Fri at 23:00 Beijing Time
+- **Monthly**: Last day of each month
 - **On Push**: Runs when pushing to main branch
-- **Manual**: Actions tab → Run workflow
+- **Manual**: Actions tab → Run workflow (choose daily/monthly)
 
 ## 🛠️ Development
 
