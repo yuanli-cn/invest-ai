@@ -158,8 +158,8 @@ class EastMoneyClient:
                 # Convert NavData to PriceData (use NAV as price)
                 price_data = PriceData(
                     code=nav_data.code,
-                    date=nav_data.date,
-                    price=nav_data.nav,  # Use NAV as the "price"
+                    price_date=nav_data.nav_date,
+                    price_value=nav_data.nav,  # Use NAV as the "price"
                     source=nav_data.source,
                 )
                 price_data_list.append(price_data)
@@ -178,8 +178,8 @@ class EastMoneyClient:
             # Convert NavData to PriceData
             price_data = PriceData(
                 code=nav_data.code,
-                date=nav_data.date,
-                price=nav_data.nav,  # Use NAV as the "price"
+                price_date=nav_data.nav_date,
+                price_value=nav_data.nav,  # Use NAV as the "price"
                 source=nav_data.source,
             )
             price_results[code] = price_data

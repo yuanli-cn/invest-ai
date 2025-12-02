@@ -372,8 +372,10 @@ class CLIController:
             
             if investment_type == InvestmentType.FUND:
                 # Fund: Use parallel requests (EastMoney has no strict rate limit)
+                # Note: East Money API doesn't enforce strict rate limits, so we can
+                # safely fetch prices in parallel for better performance
                 import asyncio
-                
+
                 async def fetch_fund_price(code: str, target_date: date, label: str) -> tuple[str, str, PriceData | None]:
                     try:
                         nav_data = await self.price_fetcher.eastmoney_client.fetch_fund_nav(code, target_date)
@@ -402,6 +404,8 @@ class CLIController:
                             year_end_prices[code] = price_data
             else:
                 # Stock: Sequential requests (Tushare has rate limit)
+                # Note: Tushare API enforces strict rate limits (200 calls/day free tier),
+                # so we must fetch prices sequentially to avoid hitting the limit
                 assert self.price_fetcher.tushare_client is not None
                 for code in codes:
                     try:
