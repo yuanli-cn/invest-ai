@@ -12,6 +12,7 @@ from invest_ai.models import (
 )
 
 from .fifo import FifoCalculator
+from .xirr import build_annual_cashflows, calculate_xirr
 
 
 class AnnualCalculator:
@@ -70,13 +71,28 @@ class AnnualCalculator:
         
         net_gain = (end_value + withdrawals + dividend_income) - (start_value + new_investments)
 
-        # Calculate return rate
-        # Average capital = start value + weighted average of cash flows
-        # Simplified: use (start_value + new_investments) as denominator
-        return_rate = 0.0
-        denominator = start_value + new_investments
-        if denominator > 0:
-            return_rate = (net_gain / denominator) * 100
+        # Calculate return rate using XIRR (professional method)
+        # Build cash flows from transactions
+        year_start_date = get_year_start_trading_day(year)
+        year_end_date = get_year_end_trading_day(year)
+        
+        # Collect transaction cash flows
+        tx_cashflows: list[tuple[date, str, float]] = []
+        for tx in year_transactions.transactions:
+            if tx.transaction_date:
+                tx_cashflows.append((tx.transaction_date, tx.type.name, tx.total_amount))
+        
+        # Build XIRR cash flows
+        xirr_cashflows = build_annual_cashflows(
+            start_date=year_start_date,
+            end_date=year_end_date,
+            start_value=start_value,
+            end_value=end_value,
+            transactions=tx_cashflows,
+        )
+        
+        # Calculate XIRR
+        return_rate = calculate_xirr(xirr_cashflows)
 
         return AnnualResult(
             code=code,

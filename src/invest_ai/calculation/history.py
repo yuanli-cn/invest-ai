@@ -1,5 +1,7 @@
 """Complete history calculation logic."""
 
+from datetime import date
+
 from invest_ai.models import (
     CalculationResult,
     HistoryResult,
@@ -8,6 +10,7 @@ from invest_ai.models import (
 )
 
 from .fifo import FifoCalculator
+from .xirr import build_history_cashflows, calculate_xirr
 
 
 class HistoryCalculator:
@@ -38,7 +41,22 @@ class HistoryCalculator:
         dividend_income = self.calculate_dividend_income(transactions)
 
         total_gain = realized_gains + unrealized_gains
-        return_rate = (total_gain / total_invested) * 100 if total_invested > 0 else 0.0
+        
+        # Calculate return rate using XIRR (professional method)
+        tx_cashflows: list[tuple[date, str, float]] = []
+        for tx in transactions.transactions:
+            if tx.transaction_date:
+                tx_cashflows.append((tx.transaction_date, tx.type.name, tx.total_amount))
+        
+        # Use today or last transaction date as end date
+        end_date = last_transaction.date if last_transaction.date else date.today()
+        
+        xirr_cashflows = build_history_cashflows(
+            transactions=tx_cashflows,
+            end_date=end_date,
+            current_value=current_value,
+        )
+        return_rate = calculate_xirr(xirr_cashflows)
 
         # Calculate individual investment results
         individual_results = await self.calculate_individual_results(
@@ -284,11 +302,27 @@ class HistoryCalculator:
             transactions, code, current_prices
         )
         total_gain = realized + unrealized
-        return_rate = (total_gain / total_invested) * 100 if total_invested > 0 else 0.0
-
+        
         current_value = self.calculate_code_current_value(
             transactions, code, current_prices
         )
+        
+        # Calculate return rate using XIRR (professional method)
+        tx_cashflows: list[tuple[date, str, float]] = []
+        for tx in code_transactions:
+            if tx.transaction_date:
+                tx_cashflows.append((tx.transaction_date, tx.type.name, tx.total_amount))
+        
+        # Find last transaction date for this code
+        last_tx = max(code_transactions, key=lambda x: x.date) if code_transactions else None
+        end_date = last_tx.date if last_tx and last_tx.date else date.today()
+        
+        xirr_cashflows = build_history_cashflows(
+            transactions=tx_cashflows,
+            end_date=end_date,
+            current_value=current_value,
+        )
+        return_rate = calculate_xirr(xirr_cashflows)
 
         return CalculationResult(
             code=code,

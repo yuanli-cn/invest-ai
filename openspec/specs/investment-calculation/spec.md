@@ -86,17 +86,25 @@ The system SHALL track dividend income separately from capital gains.
 - **WHEN** a stock dividend transaction is recorded
 - **THEN** new shares are added with zero cost basis
 
-### Requirement: Return Rate Calculation
-The system SHALL calculate return rate as percentage gain over invested capital.
+### Requirement: Return Rate Calculation (XIRR)
+The system SHALL calculate return rate using XIRR (Extended Internal Rate of Return) to provide accurate annualized returns that consider the timing of each cash flow.
 
-#### Scenario: Positive return rate
-- **WHEN** total gain is ¥500 on ¥10,000 invested
-- **THEN** return rate is 5.00%
+#### Scenario: Simple investment with positive return
+- **WHEN** user invests ¥10,000 on Jan 1 and value is ¥11,000 on Dec 31
+- **THEN** XIRR return rate is approximately 10%
 
-#### Scenario: Negative return rate
-- **WHEN** total loss is -¥200 on ¥10,000 invested
-- **THEN** return rate is -2.00%
+#### Scenario: Multiple investments with timing
+- **WHEN** user invests ¥10,000 on Jan 1, adds ¥5,000 on Jul 1, and value is ¥16,500 on Dec 31
+- **THEN** XIRR considers the mid-year investment had less time to grow
 
-#### Scenario: Zero investment
-- **WHEN** no capital has been invested
+#### Scenario: Investment with dividends
+- **WHEN** user receives dividends during the holding period
+- **THEN** dividends are treated as positive cash flows in XIRR calculation
+
+#### Scenario: Investment with partial sales
+- **WHEN** user sells some shares during the period
+- **THEN** sale proceeds are treated as positive cash flows in XIRR calculation
+
+#### Scenario: Zero or insufficient cash flows
+- **WHEN** there are no valid cash flows (all positive or all negative)
 - **THEN** return rate is 0.00%

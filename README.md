@@ -20,6 +20,7 @@
 
 | Feature | Description |
 |---------|-------------|
+| 📈 **XIRR Returns** | Professional annualized returns considering cash flow timing |
 | 🧮 **FIFO Cost Basis** | First-In-First-Out cost allocation for accurate gain/loss |
 | 📊 **Annual Reports** | Year-over-year performance with real market prices |
 | 📜 **History Reports** | Complete investment history from first transaction |
@@ -175,6 +176,31 @@ options:
   --verbose             Enable verbose output
   --version             Show version
 ```
+
+## 📊 Return Rate Calculation
+
+This project uses **XIRR (Extended Internal Rate of Return)** for calculating annualized returns - the industry standard for personal investment performance.
+
+### Why XIRR?
+
+| Method | Formula | Issue |
+|--------|---------|-------|
+| Simple Return | `gain / invested` | Ignores timing of investments |
+| TWR | Time-weighted | For fund managers, not investors |
+| **XIRR** | IRR with dates | ✅ Considers when you invested |
+
+### Example
+
+```
+2024-01-01: Buy  ¥10,000
+2024-07-01: Buy  ¥100,000  (added at market high)
+2024-12-31: Value ¥115,000
+
+Simple Return: (115000-110000)/110000 = 4.5%
+XIRR:         ~8.5% (accounts for timing)
+```
+
+XIRR reflects your **actual investment experience** - if you added money at the wrong time, your return will be lower.
 
 ## 📦 Dependencies
 
