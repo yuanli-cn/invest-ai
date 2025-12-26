@@ -37,46 +37,76 @@ class TushareClient:
         # Try target date first, then adjust for trading days
         trading_date = await self._get_trading_date(ts_code, target_date)
 
-        request_data = {
-            "api_name": "daily",
-            "token": self.config.tushare.token,
-            "params": {
-                "ts_code": ts_code,
-                "trade_date": trading_date.strftime("%Y%m%d"),
-                "fields": "ts_code,trade_date,close,high,low,open,pre_close",
-                "limit": 1,
-            },
-        }
+        # Try fetching data with fallback to previous trading days if no data
+        max_fallback_days = 7  # Max 7 days of fallback
+        last_error = None
 
-        try:
-            response = await self._make_api_request(request_data)
-            if not response or "data" not in response or not response["data"]:
-                raise ValueError(f"No data found for {code} on {trading_date}")
+        for days_back in range(max_fallback_days + 1):
+            check_date = target_date - timedelta(days=days_back)
 
-            # Parse response - Tushare returns {fields: [...], items: [[...]]}
-            data = response["data"]
-            if isinstance(data, dict) and "items" in data and "fields" in data:
-                items = data["items"]
-                fields = data["fields"]
-                if items and len(items) > 0:
-                    # Convert items list to dict using fields
-                    item_dict = dict(zip(fields, items[0]))
-                    price = float(item_dict.get("close", 0))
-                    if price <= 0:
-                        raise ValueError(f"Invalid price data for {code}: {item_dict}")
+            # Verify it's a trading day before making API call
+            actual_trading_date = await self._get_trading_date(ts_code, check_date)
+            if actual_trading_date != check_date:
+                continue  # Skip non-trading days
 
-                    return PriceData(
-                        code=code, price_date=trading_date, price_value=price, source="tushare"
-                    )
+            request_data = {
+                "api_name": "daily",
+                "token": self.config.tushare.token,
+                "params": {
+                    "ts_code": ts_code,
+                    "trade_date": actual_trading_date.strftime("%Y%m%d"),
+                    "fields": "ts_code,trade_date,close,high,low,open,pre_close",
+                    "limit": 1,
+                },
+            }
+
+            try:
+                response = await self._make_api_request(request_data)
+                if not response or "data" not in response or not response["data"]:
+                    last_error = ValueError(f"No data found for {code} on {actual_trading_date}")
+                    continue
+
+                # Parse response - Tushare returns {fields: [...], items: [[...]]}
+                data = response["data"]
+                if isinstance(data, dict) and "items" in data and "fields" in data:
+                    items = data["items"]
+                    fields = data["fields"]
+                    if items and len(items) > 0:
+                        # Convert items list to dict using fields
+                        item_dict = dict(zip(fields, items[0]))
+                        price = float(item_dict.get("close", 0))
+                        if price <= 0:
+                            last_error = ValueError(f"Invalid price data for {code}: {item_dict}")
+                            continue
+
+                        # Success! Return price data
+                        if days_back > 0:
+                            print(
+                                f"Info: Using price from {actual_trading_date} "
+                                f"({days_back} day{'s' if days_back > 1 else ''} earlier) "
+                                f"for {code} on {target_date}"
+                            )
+
+                        return PriceData(
+                            code=code, price_date=actual_trading_date, price_value=price, source="tushare"
+                        )
+                    else:
+                        # Empty items array - try next day
+                        last_error = ValueError(f"No items in response for {code} on {actual_trading_date}")
+                        continue
                 else:
-                    raise ValueError(f"No items in response for {code}")
-            else:
-                raise ValueError(f"Unexpected response format: {data}")
+                    last_error = ValueError(f"Unexpected response format: {data}")
+                    continue
 
-        except Exception as e:
-            raise RuntimeError(
-                f"Error fetching stock price for {code} on {trading_date}: {e}"
-            ) from e
+            except Exception as e:
+                last_error = e
+                continue  # Try previous day
+
+        # If we get here, no data was found
+        raise RuntimeError(
+            f"Error fetching stock price for {code} on {target_date}: "
+            f"No data available for the target date or previous {max_fallback_days} trading days"
+        ) from last_error
 
     async def fetch_current_prices(self, codes: list[str]) -> dict[str, PriceData]:
         """Fetch current prices for multiple stock codes."""
